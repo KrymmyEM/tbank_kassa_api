@@ -1,11 +1,11 @@
 import json
-import hashlib
 from typing import Dict, Any
 
 import aiohttp
 from pydantic import BaseModel
 
 from tbank_models import *
+from funcs import tokenBuilder
 
 
 class TClient:
@@ -19,35 +19,6 @@ class TClient:
         self.terminalKey = terminalKey
         self.password = password
         self.workUrl = self.TEST_URL if testMode else self.PRODUCT_URL
-
-    
-    def _tokenGenerator(self, **kwargs):
-        token_params = {key: value for key, value in kwargs.items() if not isinstance(value, dict)}
-        token_params['Password'] = self.password
-        sorted_params = sorted(token_params.keys())
-        concatenated_string = ''
-        for param in sorted_params:
-            data = token_params[param]
-            if data:
-                concatenated_string += str(data)
-        token = hashlib.sha256(concatenated_string.encode('utf-8')).hexdigest()
-        return token
-
-    def _keyToCamelCase(self, key):
-        parts = key.split('_')
-        camel_case_key = ''.join(part.capitalize() for part in parts)
-        return camel_case_key
-
-    
-    def to_camel_case(self, key):
-        parts = key.split('_')
-        camel_case_key = ''.join(part.capitalize() for part in parts)
-        return camel_case_key
-
-
-    def convert_kwargs_to_camel_case(self, kwargs):
-        return {self.to_camel_case(k): v for k, v in kwargs.items()}
-
 
 
     def _checkRequiredKeys(required_keys: list, payload_keys: list):
@@ -65,7 +36,7 @@ class TClient:
         headers = {'Content-Type': 'application/json'}
         
         # Генерация токена
-        data['Token'] = self._tokenGenerator(**data)
+        data['Token'] = tokenBuilder(self.password, **data)
         
         async with aiohttp.ClientSession() as session:
             async with session.post(url, headers=headers, data=json.dumps(data)) as response:
@@ -81,3 +52,25 @@ class TClient:
             result = await self._post("Init", payload)
             print(result)
     
+
+    def pars_notification(self, data: Union[str, dict]):
+        if isinstance(data, str):
+            data = json.loads(data)
+
+        
+        token = tokenBuilder(self.password, **data)
+
+        if data["Token"] != token:
+            raise ValueError("Token not valid")
+
+        # Определяем модель на основе наличия уникальных полей
+        if "Amount" in data and "RebillId" in data:
+            return NotificationPaymentModel(**data)
+        elif "CustomerKey" in data:
+            return NotificationAddCardModel(**data)
+        elif "FiscalNumber" in data:
+            return NotificationFiscalizationModel(**data)
+        elif "NotificationType" in data:
+            return NotificationQrModel(**data)
+        else:
+            raise ValueError("Неизвестный формат данных")

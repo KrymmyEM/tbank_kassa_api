@@ -127,19 +127,37 @@ class ReceiptBase(BaseModel):
     Email: Optional[constr(max_length=128)] = None
     Phone: Optional[constr(max_length=64)] = None
     Taxation: Taxation
-    Payments: Optional[Payments] = None
+    
 
 
 class ReceiptFFD105(ReceiptBase):
     FfdVersion: str = "1.05"
     Items: List[ItemFFD105]
+    Payments: Optional[Payments] = None
+
+
+class ReceiptFFD105_2(ReceiptBase):
+    FfdVersion: str = "1.05"
+    Items: List[ItemFFD105]
+    Payments: Optional[List[Payments]]
 
 
 class ReceiptFFD12(ReceiptBase):
     FfdVersion: str = "1.2"
     Items: List[ItemFFD12]
+    ClientInfo: Optional[ClientInfo] = None
     Customer: Optional[str] = None
     CustomerINN: Optional[constr(max_length=12)] = None
+    Payments: Optional[Payments] = None
+
+
+class ReceiptFFD12_2(ReceiptBase):
+    FfdVersion: str = "1.2"
+    Items: List[ItemFFD12]
+    ClientInfo: Optional[ClientInfo]
+    Customer: Optional[str] = None
+    CustomerINN: Optional[constr(max_length=12)] = None
+    Payments: Optional[List[Payments]]
 
 
 class Init(BaseModel):
@@ -179,4 +197,84 @@ class Init(BaseModel):
 
         return values
 
-    
+
+
+
+class NotificationBase(BaseModel):
+    TerminalKey: str
+    Success: bool
+    ErrorCode: Union[str, int]
+    Message: Optional[str] = None
+    Status: Optional[str] = None
+
+
+class NotificationPaymentModel(NotificationBase):
+    Amount: int
+    OrderId: str
+    PaymentId: str
+    Details: str
+    RebillId: int
+    CardId: int
+    Pan: str
+    ExpDate: str
+    Token: str
+    DATA: Optional[dict]
+
+
+class NotificationAddCardModel(NotificationBase):
+    CustomerKey: str
+    RequestKey: str
+    PaymentId: str
+    RebillId: str
+    CardId: str
+    Pan: str
+    ExpDate: str
+    Token: str
+
+
+class NotificationFiscalizationModel(NotificationBase):
+    OrderId: str
+    PaymentId: str
+    ErrorMessage: str
+    Amount: int
+    FiscalNumber: int
+    ShiftNumber: int
+    ReceiptDatetime: str
+    FnNumber: str
+    EcrRegNumber: str
+    FiscalDocumentNumber: int
+    FiscalDocumentAttribute: int
+    Receipt: Union[ReceiptFFD105_2, ReceiptFFD12_2] = None
+    Type: str
+    Token: str
+    Ofd: str
+    Url: str
+    QrCodeUrl: str
+    CalculationPlace: str
+    CashierName: str
+    SettlePlace: str
+
+
+    @root_validator(pre=True)
+    def check_fields(cls, values):
+        receipt = values.get("Receipt")
+
+        ffd_version = receipt.get("FfdVersion")
+
+        if "ClientInfo" in receipt or ffd_version == "1.2":
+            values["Receipt"] = ReceiptFFD12_2(**receipt)
+        
+        else:
+            values["Receipt"] = ReceiptFFD105_2(**receipt)
+
+
+        return values
+
+
+class NotificationQrModel(NotificationBase):
+    RequestKey: str
+    AccountToken: str
+    BankMemberId: str
+    BankMemberName: str
+    NotificationType: str
+    Token: str

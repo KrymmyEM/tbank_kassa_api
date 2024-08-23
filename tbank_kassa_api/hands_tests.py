@@ -11,10 +11,11 @@ if __name__ == "__main__":
     ui = uuid.uuid4()
     inut = Init(
         OrderId = 'test' + str(ui)[5:],
-        Amount = 5000,
+        Amount = 1000,
         Description = "hello",
         CustomerKey = str(ui),
         Recurrent = "Y",
+        NotificationURL="http://147.45.185.78/tbank_notify/",
         Receipt = ReceiptFFD105(
             Email = "momotov0292@gmail.com",
             Phone = "+79188814124",
@@ -22,7 +23,7 @@ if __name__ == "__main__":
             Items=[
             ItemFFD105(
                 Name = "Test",
-                Price = 2500,
+                Price = 500,
                 Quantity = 2,
                 Tax = Tax.VAT10
             )

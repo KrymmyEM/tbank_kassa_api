@@ -61,16 +61,30 @@ class TClient:
         token = tokenBuilder(self.password, **data)
 
         if data["Token"] != token:
+            print(token)
             raise ValueError("Token not valid")
 
         # Определяем модель на основе наличия уникальных полей
-        if "Amount" in data and "RebillId" in data:
-            return NotificationPaymentModel(**data)
-        elif "CustomerKey" in data:
-            return NotificationAddCardModel(**data)
-        elif "FiscalNumber" in data:
-            return NotificationFiscalizationModel(**data)
-        elif "NotificationType" in data:
-            return NotificationQrModel(**data)
-        else:
+        model = None
+        try:
+            model = NotificationPayment(**data)
+        except:
+            pass
+        try:
+            model = NotificationAddCard(**data)
+        except Exception as ex:
+            print(ex)
+            pass
+        try:
+            model = NotificationFiscalization(**data)
+        except:
+            pass
+        try:
+            model = NotificationQr(**data)
+        except:
+            pass
+
+        if not model:
             raise ValueError("Неизвестный формат данных")
+
+        return model

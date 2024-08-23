@@ -11,6 +11,9 @@ def tokenBuilder(password, **kwargs):
             continue
         data = token_params[param]
         if data:
+            if isinstance(data, bool):
+                data = str(data).lower()
             concatenated_string += str(data)
+    
     token = hashlib.sha256(concatenated_string.encode('utf-8')).hexdigest()
     return token

@@ -201,58 +201,63 @@ class Init(BaseModel):
 
 
 class NotificationBase(BaseModel):
-    TerminalKey: str
-    Success: bool
-    ErrorCode: Union[str, int]
-    Message: Optional[str] = None
-    Status: Optional[str] = None
+    TerminalKey: constr(max_length=20) = Field(..., description="Идентификатор терминала. Выдается Мерчанту Т‑Кассой при заведении терминала")
+    Success: bool = Field(..., description="Успешность прохождения запроса (true/false)")
+    ErrorCode: constr(max_length=20) = Field(..., description="Код ошибки. '0' в случае успеха")
+    Message: Optional[str] = Field(None, description="Краткое описание ошибки")
+    Token: str = Field(..., description="Токен")
+    Status: PaymentStatus
+    
+
+class NotificationPayment(NotificationBase):
+    Amount: conint(le=10**10) = Field(..., description="Сумма в копейках")
+    OrderId: constr(max_length=36) = Field(..., description="Идентификатор заказа в системе Мерчанта")
+    PaymentId: conint(le=10**20) = Field(..., description="Уникальный идентификатор транзакции в системе Т‑Кассы")
+    Details: Optional[str] = Field(None, description="Подробное описание ошибки")
+    RebillId: Optional[conint(le=10**20)] = Field(None, description="Идентификатор автоплатежа")
+    CardId: Optional[int] = Field(None, description="Идентификатор карты в системе Т‑Кассы")
+    Pan: Optional[str] = Field(None, description="Замаскированный номер карты/Замаскированный номер телефона")
+    ExpDate: Optional[constr(pattern=r"^\d{4}$")] = Field(None, description="Срок действия карты в формате MMYY")
+    
+
+    class Config:
+        anystr_strip_whitespace = True
+        min_anystr_length = 1
+        use_enum_values = True
 
 
-class NotificationPaymentModel(NotificationBase):
-    Amount: int
-    OrderId: str
-    PaymentId: str
-    Details: str
-    RebillId: int
-    CardId: int
-    Pan: str
-    ExpDate: str
-    Token: str
-    DATA: Optional[dict]
+class NotificationAddCard(NotificationBase):
+    CustomerKey: constr(max_length=36) = Field(..., description="Идентификатор клиента в системе Мерчанта")
+    RequestKey: constr(pattern=r'^[a-f0-9\-]{36}$') = Field(..., description="Идентификатор запроса на привязку карты")
+    Status: AddCardStatus = Field(..., description="Статус привязки карты")
+    PaymentId: constr(max_length=20) = Field(..., description="Идентификатор платежа в системе Т‑Кассы")
+    RebillId: constr(max_length=20) = Field(..., description="Идентификатор автоплатежа")
+    CardId: constr(max_length=20) = Field(..., description="Идентификатор карты в системе Т‑Кассы")
+    Pan: str = Field(..., description="Замаскированный номер карты")
+    ExpDate: str = Field(..., description="Срок действия карты В формате MMYY")
 
 
-class NotificationAddCardModel(NotificationBase):
-    CustomerKey: str
-    RequestKey: str
-    PaymentId: str
-    RebillId: str
-    CardId: str
-    Pan: str
-    ExpDate: str
-    Token: str
+class NotificationFiscalization(NotificationBase):
+    OrderId: constr(max_length=36) = Field(..., description="Идентификатор заказа в системе Мерчанта")
+    Status: str = Field("RECEIPT", description="Статус фискализации")
+    PaymentId: constr(max_length=20) = Field(..., description="Идентификатор платежа в системе Т‑Кассы")
+    ErrorMessage: Optional[str] = Field(None, description="Описание ошибки")
+    Amount: int = Field(..., description="Сумма в копейках")
+    FiscalNumber: int = Field(..., description="Номер чека в смене")
+    ShiftNumber: int = Field(..., description="Номер смены")
+    ReceiptDatetime: str = Field(..., description="Дата и время документа из ФН")
+    FnNumber: str = Field(..., description="Номер ФН")
+    EcrRegNumber: str = Field(..., description="Регистрационный номер ККТ")
+    FiscalDocumentNumber: int = Field(..., description="Фискальный номер документа")
+    FiscalDocumentAttribute: int = Field(..., description="Фискальный признак документа")
+    Type: str = Field(..., description="Признак расчета")
+    Ofd: Optional[str] = Field(None, description="Наименование оператора фискальных данных")
+    Url: Optional[str] = Field(None, description="URL адрес с копией чека")
+    QrCodeUrl: Optional[str] = Field(None, description="URL адрес с QR кодом для проверки чека в ФНС")
+    CalculationPlace: Optional[str] = Field(None, description="Место осуществления расчетов")
+    CashierName: Optional[str] = Field(None, description="Имя кассира")
+    SettlePlace: Optional[str] = Field(None, description="Место нахождения (установки) ККМ")
 
-
-class NotificationFiscalizationModel(NotificationBase):
-    OrderId: str
-    PaymentId: str
-    ErrorMessage: str
-    Amount: int
-    FiscalNumber: int
-    ShiftNumber: int
-    ReceiptDatetime: str
-    FnNumber: str
-    EcrRegNumber: str
-    FiscalDocumentNumber: int
-    FiscalDocumentAttribute: int
-    Receipt: Union[ReceiptFFD105_2, ReceiptFFD12_2] = None
-    Type: str
-    Token: str
-    Ofd: str
-    Url: str
-    QrCodeUrl: str
-    CalculationPlace: str
-    CashierName: str
-    SettlePlace: str
 
 
     @root_validator(pre=True)
@@ -271,10 +276,10 @@ class NotificationFiscalizationModel(NotificationBase):
         return values
 
 
-class NotificationQrModel(NotificationBase):
-    RequestKey: str
-    AccountToken: str
-    BankMemberId: str
-    BankMemberName: str
-    NotificationType: str
-    Token: str
+class NotificationQr(NotificationBase):
+    RequestKey: constr(pattern=r'^[a-f0-9\-]{36}$') = Field(..., description="Идентификатор запроса на привязку счета")
+    AccountToken: str = Field(..., description="Идентификатор привязки счета")
+    BankMemberId: Optional[str] = Field(None, description="Идентификатор банка-эмитента клиента")
+    BankMemberName: Optional[str] = Field(None, description="Наименование банка-эмитента")
+    NotificationType: str = Field("LINKACCOUNT", description="Тип нотификации")
+    Status: str = Field(..., description="Статус привязки")

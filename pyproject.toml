@@ -24,8 +24,9 @@ classifiers = [
     'Programming Language :: Python :: Implementation :: CPython',
 ]
 
-url = "https://github.com/KrymmyEM/tbank_kassa_api"
-download_url="https://github.com/KrymmyEM/tbank_kassa_api/archive/main.zip"
+[project.urls]
+Repository = "https://github.com/KrymmyEM/tbank_kassa_api"
+Download="https://github.com/KrymmyEM/tbank_kassa_api/archive/main.zip"
 
 [tool.setuptools]
 packages = ["tbank_kassa_api"]

@@ -48,9 +48,12 @@ class TClient:
         payload["TerminalKey"] = self.terminalKey
         payload_keys = payload.keys()
 
+        result = {}
+
         if isinstance(model, Init):
             result = await self._post("Init", payload)
-            print(result)
+            
+        return result
     
 
     def pars_notification(self, data: Union[str, dict]):
@@ -61,7 +64,6 @@ class TClient:
         token = tokenBuilder(self.password, **data)
 
         if data["Token"] != token:
-            print(token)
             raise ValueError("Token not valid")
 
         # Определяем модель на основе наличия уникальных полей

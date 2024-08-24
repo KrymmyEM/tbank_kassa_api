@@ -2,6 +2,7 @@ import json
 from typing import Dict, Any
 
 import aiohttp
+import requests
 from pydantic import BaseModel
 
 from tbank_kassa_api.tbank_models import *
@@ -12,6 +13,7 @@ from tbank_kassa_api.funcs import tokenBuilder
 class TClient:
     PRODUCT_URL = "https://securepay.tinkoff.ru/v2/"
     TEST_URL = "https://rest-api-test.tinkoff.ru/v2/"
+
 
     def __init__(self, terminalKey: str, password: str, testMode: bool = False):
         if len(terminalKey)  > 20:
@@ -29,7 +31,22 @@ class TClient:
 
         return True
 
-    async def _post(self, endpoint: str, data: Dict[str, Any]) -> Dict[str, Any]:
+
+    def _post(self, endpoint: str, data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Выполнение POST-запроса к API.
+        """
+        url = self.workUrl + endpoint
+        headers = {'Content-Type': 'application/json'}
+        
+        # Генерация токена
+        data['Token'] = tokenBuilder(self.password, **data)
+        response = requests.post(url, headers=headers, json=json.dumps(data))
+        json_data = json.loads(response.text)
+        return json_data
+
+
+    async def _a_post(self, endpoint: str, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Выполнение POST-запроса к API.
         """
@@ -41,10 +58,11 @@ class TClient:
         
         async with aiohttp.ClientSession() as session:
             async with session.post(url, headers=headers, data=json.dumps(data)) as response:
-                return await response.text()
+                json_data = json.loads(await response.text())
+                return json_data
 
 
-    async def send_model(self, model: BaseModel):
+    def sync_send_model(self, model: BaseModel):
         payload = model.dict(exclude_none=True)
         payload["TerminalKey"] = self.terminalKey
         payload_keys = payload.keys()
@@ -52,7 +70,20 @@ class TClient:
         result = {}
 
         if isinstance(model, Init):
-            result = await self._post("Init", payload)
+            result = self._post("Init", payload)
+            
+        return result
+
+
+    async def async_send_model(self, model: BaseModel):
+        payload = model.dict(exclude_none=True)
+        payload["TerminalKey"] = self.terminalKey
+        payload_keys = payload.keys()
+
+        result = {}
+
+        if isinstance(model, Init):
+            result = await self._a_post("Init", payload)
             
         return result
     

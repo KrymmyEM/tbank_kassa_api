@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, constr, conlist, conint, root_validator
 from typing import List, Optional, Union
 
-from enums import *
+from tbank_kassa_api.enums import *
 
 class AgentData(BaseModel):
     AgentSign: AgentSign

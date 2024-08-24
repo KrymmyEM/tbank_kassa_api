@@ -1,8 +1,8 @@
 from pydantic import BaseModel, Field, constr, conlist, conint, root_validator
 from typing import List, Optional, Union
 
-from tbank_models import Shop, ReceiptFFD105, ReceiptFFD12
-from enums import PayType
+from tbank_kassa_api.tbank_models import Shop, ReceiptFFD105, ReceiptFFD12
+from tbank_kassa_api.enums import PayType
 
 class Init(BaseModel):
     OrderId: constr(max_length=36)

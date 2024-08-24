@@ -4,8 +4,9 @@ from typing import Dict, Any
 import aiohttp
 from pydantic import BaseModel
 
-from tbank_models import *
-from funcs import tokenBuilder
+from tbank_kassa_api.tbank_models import *
+from tbank_kassa_api.send_models import *
+from tbank_kassa_api.funcs import tokenBuilder
 
 
 class TClient:

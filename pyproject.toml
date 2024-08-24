@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools"]
+
+[project]
+name = "tbank_kassa_api"
+version = "0.0.1"
+authors = [
+    {name = "Evgeny (Krymmy) Momotov", email = "evgeny.momotov@gmail.com"},
+]
+readme = "README.md"
+dependencies = [
+    "aiohttp==3.10.5",
+    "pydantic==2.8.2",
+]
+license = {text = "MIT License. See LICENSE file"}
+classifiers = [
+    'License :: OSI Approved :: MIT License',
+    'Operating System :: OS Independent',
+    'Intended Audience :: End Users/Desktop',
+    'Intended Audience :: Developers',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: Implementation :: PyPy',
+    'Programming Language :: Python :: Implementation :: CPython',
+]
+
+url = "https://github.com/KrymmyEM/tbank_kassa_api"
+download_url="https://github.com/KrymmyEM/tbank_kassa_api/archive/main.zip"
+
+[tool.setuptools]
+packages = ["tbank_kassa_api"]
+

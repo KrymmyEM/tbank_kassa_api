@@ -41,7 +41,7 @@ class TClient:
         
         # Генерация токена
         data['Token'] = tokenBuilder(self.password, **data)
-        response = requests.post(url, headers=headers, json=json.dumps(data))
+        response = requests.post(url, headers=headers, json=data)
         json_data = json.loads(response.text)
         return json_data
 

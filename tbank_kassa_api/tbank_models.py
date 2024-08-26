@@ -5,13 +5,13 @@ from tbank_kassa_api.enums import *
 
 class AgentData(BaseModel):
     AgentSign: AgentSign
-    OperationName: Optional[constr(max_length=64)] = None
-    Phones: Optional[conlist(constr(min_length=1, max_length=19), min_length=1)] = None
-    ReceiverPhones: Optional[conlist(constr(min_length=1, max_length=19), min_length=1)] = None
-    TransferPhones: Optional[conlist(constr(min_length=1, max_length=19), min_length=1)] = None
-    OperatorName: Optional[constr(max_length=64)] = None
-    OperatorAddress: Optional[constr(max_length=243)] = None
-    OperatorINN: Optional[constr(max_length=12)] = None
+    OperationName: Optional[constr(max_length=64)] 
+    Phones: Optional[conlist(constr(min_length=1, max_length=19), min_length=1)] 
+    ReceiverPhones: Optional[conlist(constr(min_length=1, max_length=19), min_length=1)] 
+    TransferPhones: Optional[conlist(constr(min_length=1, max_length=19), min_length=1)] 
+    OperatorName: Optional[constr(max_length=64)] 
+    OperatorAddress: Optional[constr(max_length=243)] 
+    OperatorINN: Optional[constr(max_length=12)] 
 
     @root_validator(pre=True)
     def check_required_fields(cls, values):
@@ -62,10 +62,10 @@ class ItemBase(BaseModel):
     Quantity: int
     Amount: int
     PaymentMethod: PaymentMethods = PaymentMethods.FULL_PAYMENT
-    PaymentObject: Optional[PaymentObject] = None
+    PaymentObject: Optional[PaymentObject] 
     Tax: Tax
-    AgentData: Optional[AgentData] = None
-    SupplierInfo: Optional[SupplierInfo] = None
+    AgentData: Optional[AgentData] 
+    SupplierInfo: Optional[SupplierInfo] 
 
     @root_validator(pre=True)
     def check_fields(cls, values):
@@ -84,36 +84,36 @@ class ItemBase(BaseModel):
 
 
 class ItemFFD105(ItemBase):
-    Ean13: Optional[constr(max_length=300)] = None
-    ShopCode: Optional[str] = None
+    Ean13: Optional[constr(max_length=300)] 
+    ShopCode: Optional[str] 
 
 
 class ItemFFD12(ItemBase):
     MeasurementUnit: str
-    UserData: Optional[str] = None
-    Excise: Optional[str] = None
-    CountryCode: Optional[constr(max_length=3)] = None
-    DeclarationNumber: Optional[str] = None
-    MarkProcessingMode: Optional[str] = None
-    MarkCode: Optional[MarkCode] = None
-    MarkQuantity: Optional[MarkQuantity] = None
-    SectoralItemProps: Optional[SectoralItemProps] = None
+    UserData: Optional[str] 
+    Excise: Optional[str] 
+    CountryCode: Optional[constr(max_length=3)] 
+    DeclarationNumber: Optional[str] 
+    MarkProcessingMode: Optional[str] 
+    MarkCode: Optional[MarkCode] 
+    MarkQuantity: Optional[MarkQuantity] 
+    SectoralItemProps: Optional[SectoralItemProps] 
 
 
 class Payments(BaseModel):
-    Cash: Optional[int] = None
+    Cash: Optional[int] 
     Electronic: int
-    AdvancePayment: Optional[int] = None
-    Credit: Optional[int] = None
-    Provision: Optional[int] = None
+    AdvancePayment: Optional[int] 
+    Credit: Optional[int] 
+    Provision: Optional[int] 
 
 
 class ClientInfo(BaseModel):
-    Birthdate: Optional[str] = None
-    Citizenship: Optional[str] = None
-    DocumentCode: Optional[str] = None
-    DocumentData: Optional[str] = None
-    Address: Optional[str] = None
+    Birthdate: Optional[str] 
+    Citizenship: Optional[str] 
+    DocumentCode: Optional[str] 
+    DocumentData: Optional[str] 
+    Address: Optional[str] 
 
 
 class Shop(BaseModel):
@@ -124,8 +124,8 @@ class Shop(BaseModel):
 
 
 class ReceiptBase(BaseModel):
-    Email: Optional[constr(max_length=128)] = None
-    Phone: Optional[constr(max_length=64)] = None
+    Email: Optional[constr(max_length=128)] 
+    Phone: Optional[constr(max_length=64)] 
     Taxation: Taxation
     
 
@@ -133,7 +133,7 @@ class ReceiptBase(BaseModel):
 class ReceiptFFD105(ReceiptBase):
     FfdVersion: str = "1.05"
     Items: List[ItemFFD105]
-    Payments: Optional[Payments] = None
+    Payments: Optional[Payments] 
 
 
 class ReceiptFFD105_2(ReceiptBase):
@@ -145,18 +145,18 @@ class ReceiptFFD105_2(ReceiptBase):
 class ReceiptFFD12(ReceiptBase):
     FfdVersion: str = "1.2"
     Items: List[ItemFFD12]
-    ClientInfo: Optional[ClientInfo] = None
-    Customer: Optional[str] = None
-    CustomerINN: Optional[constr(max_length=12)] = None
-    Payments: Optional[Payments] = None
+    ClientInfo: Optional[ClientInfo] 
+    Customer: Optional[str] 
+    CustomerINN: Optional[constr(max_length=12)] 
+    Payments: Optional[Payments] 
 
 
 class ReceiptFFD12_2(ReceiptBase):
     FfdVersion: str = "1.2"
     Items: List[ItemFFD12]
     ClientInfo: Optional[ClientInfo]
-    Customer: Optional[str] = None
-    CustomerINN: Optional[constr(max_length=12)] = None
+    Customer: Optional[str] 
+    CustomerINN: Optional[constr(max_length=12)] 
     Payments: Optional[List[Payments]]
 
 

@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field, constr, conlist, conint, root_validator
 from typing import List, Optional, Union
 
 from tbank_kassa_api.enums import *
+from tbank_kassa_api.enums import PaymentObject
 
 class AgentData(BaseModel):
     AgentSign: AgentSign
@@ -62,7 +63,7 @@ class ItemBase(BaseModel):
     Quantity: int
     Amount: int
     PaymentMethod: PaymentMethods = PaymentMethods.FULL_PAYMENT
-    PaymentObject: PaymentObject = PaymentObject.COMMODITY
+    PaymentObject: Optional[PaymentObject] = None
     Tax: Tax
     AgentData: Optional[AgentData] = None
     SupplierInfo: Optional[SupplierInfo] = None
@@ -243,3 +244,14 @@ class NotificationQr(NotificationBase):
     BankMemberName: Optional[str] = Field(None, description="Наименование банка-эмитента")
     NotificationType: str = Field("LINKACCOUNT", description="Тип нотификации")
     Status: str = Field(..., description="Статус привязки")
+
+
+if __name__ == "__main__":
+    item = ItemFFD105(
+                Name = "Услуга химчистки",
+                Price = 1000,
+                Quantity = 1,
+                PaymentMethod = PaymentMethods.FULL_PAYMENT,
+                PaymentObject = PaymentObject.COMMODITY,
+                Tax = Tax.NONE
+            )

@@ -1,4 +1,4 @@
-from enum import StrEnum
+from enum import StrEnum, Enum
 
 
 class PayType(StrEnum):
@@ -44,7 +44,7 @@ class PaymentMethods(StrEnum):
     CREDIT_PAYMENT = "credit_payment"
 
 
-class PaymentObject(StrEnum):
+class PaymentObject(str, Enum):
     COMMODITY = "commodity"
     EXCISE = "excise"
     JOB = "job"

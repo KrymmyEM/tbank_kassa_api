@@ -62,7 +62,7 @@ class ItemBase(BaseModel):
     Quantity: int
     Amount: int
     PaymentMethod: PaymentMethods = PaymentMethods.FULL_PAYMENT
-    PaymentObject: Optional[PaymentObject] = None
+    PaymentObject: Optional[PaymentObject] = PaymentObject.COMMODITY
     Tax: Tax
     AgentData: Optional[AgentData] = None
     SupplierInfo: Optional[SupplierInfo] = None

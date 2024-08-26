@@ -3,7 +3,7 @@ requires = ["setuptools"]
 
 [project]
 name = "tbank_kassa_api"
-version = "0.0.2.7"
+version = "0.0.2.7.1"
 authors = [
     {name = "Evgeny (Krymmy) Momotov", email = "evgeny.momotov@gmail.com"},
 ]

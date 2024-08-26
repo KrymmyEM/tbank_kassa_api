@@ -3,15 +3,15 @@ requires = ["setuptools"]
 
 [project]
 name = "tbank_kassa_api"
-version = "0.0.2.5"
+version = "0.0.2.7"
 authors = [
     {name = "Evgeny (Krymmy) Momotov", email = "evgeny.momotov@gmail.com"},
 ]
 readme = "README.md"
 dependencies = [
-    "aiohttp==3.10.5",
+    "aiohttp<=3.10.5",
     "pydantic==2.8.2",
-    "requests==2.32.3"
+    "requests<=2.32.3"
 ]
 license = {text = "MIT License. See LICENSE file"}
 classifiers = [

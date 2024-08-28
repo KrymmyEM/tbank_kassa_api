@@ -63,7 +63,7 @@ class ItemBase(BaseModel):
     Quantity: int
     Amount: int
     PaymentMethod: PaymentMethods = PaymentMethods.FULL_PAYMENT
-    PaymentObject: Optional[PaymentObject] = None
+    PaymentObject: str = PaymentObject.COMMODITY
     Tax: Tax
     AgentData: Optional[AgentData] = None
     SupplierInfo: Optional[SupplierInfo] = None
@@ -252,6 +252,8 @@ if __name__ == "__main__":
                 Price = 1000,
                 Quantity = 1,
                 PaymentMethod = PaymentMethods.FULL_PAYMENT,
-                PaymentObject = PaymentObject.COMMODITY,
+                PaymentObject = PaymentObject.SERVICE,
                 Tax = Tax.NONE
             )
+        
+    print(item)

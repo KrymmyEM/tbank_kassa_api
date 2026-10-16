@@ -1,2 +1,2 @@
 # tbank_kassa_api
-API Wrapper for T-BANK Kassa (https://www.tbank.ru/kassa/dev/payments/)
+API Wrapper for T-BANK Kassa [https://www.tbank.ru/kassa/dev/payments](https://developer.tbank.ru/eacq/intro/developer/openapi)/)
